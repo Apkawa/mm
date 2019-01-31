@@ -23,11 +23,12 @@ This project use Javascript and :
   - [x] FTP
   - [x] SFTP
   - [x] ... 
+  - [ ] api adapters
 - [x] Drag&drop file upload
 - [x] Multiple file upload
 - [x] Image preview
 - [x] Input option
-- [ ] Multilanguage
+- [ ] i18n
 - [ ] File actions :
   - [x] Details
   - [x] Download
@@ -40,11 +41,18 @@ This project use Javascript and :
   - [ ] Delete
 - [x] Context menu
 - [x] vuejs component
+    
+- [ ] Refactoring
+    - [ ] TypeScript
+    - [ ] Tests
+    - [ ] simplify component
+
 - [x] npm package
 - [ ] Integration :
   - [ ] CKEditor plugin
   - [ ] TinyMCE plugin
   - [ ] Drupal module
+  
 
 ## Install
 

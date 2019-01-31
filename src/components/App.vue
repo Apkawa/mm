@@ -83,8 +83,10 @@ export default {
                 }
             }
 
-            if (this.options.onSelect)
+            if (this.options.onSelect) {
                 this.options.onSelect(e);
+            }
+            this.$emit('select', e)
         }
     },
     mounted() {

@@ -8,22 +8,26 @@ export default class Api {
             listUrl: null,
             downloadUrl: null,
             uploadUrl: null,
-            axiosOptions: {}
+            getAxios: axios.create,
+            axiosOptions: {
+                crossDomain: true,
+                headers: {}
+            }
         };
     }
 
     constructor(opts) {
-        this.options = { ...this.constructor.defaultOptions, ...opts};
+        this.options = {...this.constructor.defaultOptions, ...opts};
 
         if (this.options.baseUrl) {
             this.options.axiosOptions.baseURL = this.options.baseUrl;
         }
-
-        this.axios = axios.create(this.options.axiosOptions);
+        const {getAxios, axiosOptions} = this.options
+        this.axios = getAxios(axiosOptions);
     }
 
     list(path) {
-        var conf = this.computeConfig({ params: { path: path } });
+        var conf = this.computeConfig({params: {path: path}});
         return this.axios.get(this.options.listUrl, conf);
     }
 
@@ -34,19 +38,19 @@ export default class Api {
 
     computeConfig(conf) {
         if (!this.options.requestConfig) {
-            return conf
+            return conf;
         }
-        var overrideConf = this.options.requestConfig
+        var overrideConf = this.options.requestConfig;
         if (overrideConf instanceof Function) {
-            overrideConf = overrideConf()
+            overrideConf = overrideConf();
         }
-        return { ...conf, ...overrideConf }
+        return {...conf, ...overrideConf};
     }
 
     downloadUrl(file) {
         // TODO : proper
         if (this.options.downloadUrl)
-            return this.options.downloadUrl+'?path='+file.path;
+            return this.options.downloadUrl + '?path=' + file.path;
     }
 
 }
