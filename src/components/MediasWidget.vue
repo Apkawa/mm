@@ -131,12 +131,38 @@ export default {
             return 'left: '+this.contextMenuX+'px; top:'+this.contextMenuY+'px;';
         },
         filteredFiles() {
+            let filteredFiles, filteredAndSortedFiles;
+
             if(this.filterPattern) {
                 let re = RegExp(this.filterPattern, 'i');
-                return this.files.filter((f) => f.basename.match(re));
+                filteredFiles = this.files.filter((f) => f.basename.match(re));
             } else {
-                return this.files;
+                filteredFiles = this.files;
             }
+
+            if(this.listViewActive) {
+                filteredAndSortedFiles = filteredFiles.sort((a, b) => {
+                    if(a.uploaded_at) {
+                        if(b.uploaded_at) {
+                            let dateA = new Date(a.uploaded_at);
+                            let dateB = new Date(b.uploaded_at);
+                            return dateB - dateA;
+                        } else {
+                            return 1; 
+                        }
+                    } else {
+                        if(b.uploaded_at) {
+                            return -1; 
+                        } else {
+                            return a.basename > b.basename ? 1 : a.basename < a.basename ? -1 : 0;
+                        }
+                    }
+                })
+            } else {
+                filteredAndSortedFiles = filteredFiles;
+            }
+
+            return filteredAndSortedFiles; 
         }
     },
     watch: {

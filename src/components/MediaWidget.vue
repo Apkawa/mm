@@ -24,7 +24,9 @@
 
         <div class="file-title">{{ file.basename }}</div>
 
-        <div class="file-uploaded-at">{{ file.uploaded_at }}</div>
+        <div class="file-uploaded-at">
+            {{ formatDate(file.uploaded_at) }}
+        </div>
 
     </div>
 
@@ -32,6 +34,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import moment from 'moment';
 
 export default {
     props: [ 'file' ],
@@ -41,6 +44,9 @@ export default {
         }
     },
     methods: {
+        formatDate(dateString) {
+            return moment(dateString).format('DD.MM.YYYY HH:mm'); 
+        }
     }
 };
 </script>
@@ -57,13 +63,15 @@ $filePreviewIconHeight: $filePreviewHeight - $filePreviewDiff;
 $fileBorderColor: #eee;
 $fileBorderColorH: #333;
 
+$fileListItemHeight: 40px;
+
 .file {
-    display: flex;
     cursor: pointer;
 }
 
 .icons-view {
     .file {
+        display: flex;
         float: left;
         width: $fileWidth;
         height: $fileHeight;
@@ -88,21 +96,26 @@ $fileBorderColorH: #333;
         overflow: hidden;
 
         .thumb {
-            margin-top: 0px; /* magic! */
+            padding: 4px;
+            width: 100%;
         }
         .icon {
-            margin-bottom: $fileBorderWidth;
+            margin-top: $fileBorderWidth;
+            font-size: $filePreviewHeight/2;
         }
     }
     .file-title {
         height: $fileTitleHeight;
+        width: $fileWidth - 8px;
+        margin-left: 4px; 
         overflow: hidden;
+
         background-color: transparent;
         color: #000;
-        padding: 0 6px;
+        transition: color 0.4s;
+
         line-height: $fileTitleHeight;
         font-size: $fileTitleHeight/2;
-        transition: color 0.4s;
     }
     .file-uploaded-at {
         display: none;
@@ -111,12 +124,46 @@ $fileBorderColorH: #333;
 
 .list-view {
     .file {
-        flex-direction: row;
+        height: $fileListItemHeight;
         border: $fileBorderWidth solid $fileBorderColor;
         transition: border-color 0.4s;
+        display: block;
+    }
+    .file::after {
+        clear: both;
     }
     .selected {
         border-color: $fileBorderColorH;
+    }
+    .file-preview {
+        width: $fileListItemHeight;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+
+        float: left;
+
+        .thumb {
+            padding: 4px;
+            width: 100%;
+        }
+        .icon {
+            margin-top: $fileBorderWidth*2;
+            font-size: $fileListItemHeight/2;
+        }
+    }
+    .file-title {
+        padding-left: 2px;
+        float: left;
+        height: $fileListItemHeight;
+        line-height: $fileListItemHeight; 
+    }
+    .file-uploaded-at {
+        float: right;
+        height: $fileListItemHeight;
+        line-height: $fileListItemHeight; 
+        padding-right: 5px;
     }
 }
 
