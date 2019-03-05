@@ -22,17 +22,9 @@
 
         </div>
 
-        <!--<div v-if="file.type!='dir'" class="file-actions">-->
-        <!--    <div class="btn-group btn-group-xs" role="group">-->
-        <!--        <button v-if="isSelected" v-on:click.stop="onUnselect" class="btn btn-default"><i class="fa fa-fw fa-check-square-o"></i></button>-->
-        <!--        <button v-else v-on:click.stop="onSelect" class="btn btn-default"><i class="fa fa-fw fa-square-o"></i></button>-->
-        <!--        <button class="btn btn-default"><i class="fa fa-fw fa-search-plus"></i></button>-->
-        <!--    </div>-->
-        <!--</div>-->
+        <div class="file-title">{{ file.basename }}</div>
 
-        <div class="file-title">
-            <h3>{{ file.basename }}</h3>
-        </div>
+        <div class="file-uploaded-at">{{ file.uploaded_at }}</div>
 
     </div>
 
@@ -55,94 +47,77 @@ export default {
 
 <style lang="scss">
 $fileWidth: 70px;
-$fileBorderWidth: 2px;
 $filePreviewHeight: 60px;
-$filePreviewPadding: 4px;
-$filePreviewDiff: 2*($fileBorderWidth+$filePreviewPadding);
-$filePreviewIconHeight: $filePreviewHeight - $filePreviewDiff;
 $fileTitleHeight: 20px;
 $fileHeight: $filePreviewHeight + $fileTitleHeight;
+$filePreviewPadding: 4px;
+$fileBorderWidth: 2px;
+$filePreviewDiff: 2*($fileBorderWidth+$filePreviewPadding);
+$filePreviewIconHeight: $filePreviewHeight - $filePreviewDiff;
 $fileBorderColor: #eee;
 $fileBorderColorH: #333;
 
 .file {
-    position: relative;
-    float: left;
-    width: $fileWidth;
-    height: $fileHeight;
+    display: flex;
     cursor: pointer;
-    border: $fileBorderWidth solid $fileBorderColor;
-    transition: border-color 0.4s;
-    overflow: hidden;
 }
 
-.file-preview {
-    padding: 4px;
-    .thumb {
-        width: 100%;
-        margin-top: -(($fileWidth - $filePreviewHeight)/2);
+.icons-view {
+    .file {
+        float: left;
+        width: $fileWidth;
+        height: $fileHeight;
+        flex-direction: column;
+        border-width: 0px;
+        background-color: $fileBorderColor;
+        transition: background-color 0.4s;
     }
-    .icon {
-        text-align: center;
-        line-height: $filePreviewIconHeight;
-        font-size: ($filePreviewIconHeight) / 1.3;
-        .fa {
-            vertical-align: middle;
+    .selected {
+        background-color: $fileBorderColorH;
+        .file-title {
+            color: white;
         }
     }
-}
+    .file-preview {
+        height: $filePreviewHeight - $fileBorderWidth;
+        margin: $fileBorderWidth $fileBorderWidth 0 $fileBorderWidth;
+        background-color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
 
-.file-no-title {
-    .icon {
-        line-height: $fileHeight - $filePreviewDiff;
+        .thumb {
+            margin-top: 0px; /* magic! */
+        }
+        .icon {
+            margin-bottom: $fileBorderWidth;
+        }
     }
-}
-
-/*
-.file-actions {
-    display: none;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    text-align: center;
-    margin-top: 10px;
-}
-
-.file:hover, .file:focus, .file.selected {
-    .file-actions {
-        display: block;
-    }
-}
-*/
-
-.file-title {
-    position: absolute;
-    height: 20px;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    overflow: hidden;
-    background-color: $fileBorderColor;
-    transition: background-color 0.4s;
-
-    h3 {
+    .file-title {
+        height: $fileTitleHeight;
+        overflow: hidden;
+        background-color: transparent;
         color: #000;
-        margin: 0 4px;
+        padding: 0 6px;
         line-height: $fileTitleHeight;
         font-size: $fileTitleHeight/2;
         transition: color 0.4s;
     }
-}
-
-.file.selected {
-    border-color: $fileBorderColorH;
-    .file-title {
-        background-color: $fileBorderColorH;
-        h3 {
-            color: #fff;
-        }
+    .file-uploaded-at {
+        display: none;
     }
 }
+
+.list-view {
+    .file {
+        flex-direction: row;
+        border: $fileBorderWidth solid $fileBorderColor;
+        transition: border-color 0.4s;
+    }
+    .selected {
+        border-color: $fileBorderColorH;
+    }
+}
+
 </style>

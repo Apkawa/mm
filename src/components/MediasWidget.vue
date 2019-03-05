@@ -16,7 +16,7 @@
             <!--    This folder is empty.-->
             <!--</div>-->
 
-            <div class="medias clearfix">
+            <div class="medias">
                 <template v-if="loading">
 
                     <div class="file animated fadeIn">
@@ -43,25 +43,23 @@
                         <input v-model="filterPattern" placeholder="Поиск"/>
                     </div> 
 
-                    <div class="files" :class="listViewActive ? 'list-view' : 'icons-view'">
+                    <div class="files clearfix" :class="listViewActive ? 'list-view' : 'icons-view'">
                         <div v-if="relPath" v-on:click="browse(pathUp)" class="file animated fadeIn">
                             <div class="file-preview">
-                                <div class="icon">
+                                <div class="icon" style="margin-right: 5px">
                                     <i class="fa fa-fw fa-backward"></i>
                                 </div>
                             </div>
                         </div>
 
                         <media-widget
-                            v-for="(file, key) in filteredFiles"
+                            v-for="file in filteredFiles"
                             v-on:click.native="onMediaClick(file)"
                             v-on:contextmenu.native.prevent="onContextMenu(file, $event)"
                             v-bind:file="file"
                             v-bind:key="file.path"
                             class="animated fadeIn"
                         ></media-widget>
-
-                        <div style="clear:both"></div>
                     </div>
 
                 </template>
@@ -218,7 +216,6 @@ export default {
 $filesMargin: 5px;
 $toolbarHorizontalMargins:5px;  
 $toolbarVerticalPaddings: 10px;
-$fileWidth: 70px;
 
 .medias {
     margin: (-$filesMargin) (-$filesMargin) 15px (-$filesMargin);
@@ -248,14 +245,6 @@ $fileWidth: 70px;
     .file {
         margin: $filesMargin;
     }
-    /*
-    .list-view {
-
-    }
-    .icons-view {
-        .file {
-        }
-    }*/
 }
 
 .context-menu {
