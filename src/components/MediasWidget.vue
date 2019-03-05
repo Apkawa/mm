@@ -29,23 +29,40 @@
 
                 </template>
                 <template v-else>
+                    <div class="editor-toolbar">
+                        <a
+                            class="fa fa-th"
+                            :class="{active:!listViewActive}"
+                            @click="listViewActive=false"
+                        ></a>
+                        <a
+                            class="fa fa-bars"
+                            :class="{active:listViewActive}"
+                            @click="listViewActive=true"
+                        ></a>
+                        <input v-model="filterPattern" placeholder="Поиск"/>
+                    </div> 
 
-                    <div v-if="relPath" v-on:click="browse(pathUp)" class="file animated fadeIn">
-                        <div class="file-preview">
-                            <div class="icon">
-                                <i class="fa fa-fw fa-backward"></i>
+                    <!-- <div class="files" :class="listViewActive ? 'list-view' : 'icons-view'"> -->
+                        <div v-if="relPath" v-on:click="browse(pathUp)" class="file animated fadeIn">
+                            <div class="file-preview">
+                                <div class="icon">
+                                    <i class="fa fa-fw fa-backward"></i>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <media-widget
-                        v-for="file, key in files"
-                        v-on:click.native="onMediaClick(file)"
-                        v-on:contextmenu.native.prevent="onContextMenu(file, $event)"
-                        v-bind:file="file"
-                        v-bind:key="file.path"
-                        class="animated fadeIn"
-                    ></media-widget>
+                        <media-widget
+                            v-for="(file, key) in filteredFiles"
+                            v-on:click.native="onMediaClick(file)"
+                            v-on:contextmenu.native.prevent="onContextMenu(file, $event)"
+                            v-bind:file="file"
+                            v-bind:key="file.path"
+                            class="animated fadeIn"
+                        ></media-widget>
+
+                        <div style="clear:both"></div>
+                    <!-- </div> -->
 
                 </template>
             </div>
@@ -86,10 +103,12 @@ export default {
             contextMenuFile: {},
             contextMenuX: 0,
             contextMenuY: 0,
-            showContextMenu: false
+            showContextMenu: false,
+            listViewActive: false,
+            filterPattern: ''
         };
     },
-    props: [ 'path' ],
+    props: ['path'],
     computed: {
         ...mapState({
             basePath: state => state.options.basePath
@@ -112,6 +131,14 @@ export default {
         },
         contextMenuStyle() {
             return 'left: '+this.contextMenuX+'px; top:'+this.contextMenuY+'px;';
+        },
+        filteredFiles() {
+            if(this.filterPattern) {
+                let re = RegExp(this.filterPattern, 'i');
+                return this.files.filter((f) => f.basename.match(re));
+            } else {
+                return this.files;
+            }
         }
     },
     watch: {
@@ -189,12 +216,46 @@ export default {
 
 <style lang="scss">
 $filesMargin: 5px;
+$toolbarHorizontalMargins:5px;  
+$toolbarVerticalPaddings: 10px;
+$fileWidth: 70px;
 
 .medias {
     margin: (-$filesMargin) (-$filesMargin) 15px (-$filesMargin);
+
+    .editor-toolbar {
+        display: flex;
+        align-items: center;
+        padding-top: $toolbarVerticalPaddings;
+        padding-bottom: $toolbarVerticalPaddings;
+        margin: 20px $toolbarHorizontalMargins 0 $toolbarHorizontalMargins;
+        a {
+            margin-right: 5px;
+        }
+        input {
+            height: 30px;
+            padding-left: 5px;
+        }
+    }
+    .files {
+        border: 1px solid #ddd;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        margin-left: $toolbarHorizontalMargins;
+        margin-right: $toolbarHorizontalMargins;
+        padding: 5px;
+    }
     .file {
         margin: $filesMargin;
     }
+    /*
+    .list-view {
+
+    }
+    .icons-view {
+        .file {
+        }
+    }*/
 }
 
 .context-menu {
@@ -224,4 +285,5 @@ $filesMargin: 5px;
         }
     }
 }
+
 </style>
