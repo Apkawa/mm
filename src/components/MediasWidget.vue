@@ -43,7 +43,7 @@
                         <input v-model="filterPattern" placeholder="Поиск"/>
                     </div> 
 
-                    <!-- <div class="files" :class="listViewActive ? 'list-view' : 'icons-view'"> -->
+                    <div class="files" :class="listViewActive ? 'list-view' : 'icons-view'">
                         <div v-if="relPath" v-on:click="browse(pathUp)" class="file animated fadeIn">
                             <div class="file-preview">
                                 <div class="icon">
@@ -62,7 +62,7 @@
                         ></media-widget>
 
                         <div style="clear:both"></div>
-                    <!-- </div> -->
+                    </div>
 
                 </template>
             </div>
