@@ -1,6 +1,6 @@
 <template>
 
-    <div class="file" v-bind:class="{ selected: mmc.isSelected(file) }">
+    <div class="file" :class="{ selected: mmc.isSelected(file) }">
 
         <div class="file-preview">
 
