@@ -41,6 +41,13 @@
                             @click="listViewActive=true"
                         ></a>
                         <input v-model="filterPattern" placeholder="Поиск"/>
+                        <span>Сортировка:</span>
+                        <select v-model="sorting">
+                            <option value="freshFirst">Новые сверху</option>
+                            <option value="oldFirst">Старые сверху</option>
+                            <option value="aToZ">A -> Z</option>
+                            <option value="zToA">Z -> A</option>
+                        </select>
                     </div> 
 
                     <div class="files clearfix" :class="listViewActive ? 'list-view' : 'icons-view'">
@@ -103,7 +110,8 @@ export default {
             contextMenuY: 0,
             showContextMenu: false,
             listViewActive: false,
-            filterPattern: ''
+            filterPattern: '',
+            sorting: 'freshFirst'
         };
     },
     props: ['path'],
@@ -131,38 +139,47 @@ export default {
             return 'left: '+this.contextMenuX+'px; top:'+this.contextMenuY+'px;';
         },
         filteredFiles() {
-            let filteredFiles, filteredAndSortedFiles;
-
-            if(this.filterPattern) {
-                let re = RegExp(this.filterPattern, 'i');
-                filteredFiles = this.files.filter((f) => f.basename.match(re));
-            } else {
-                filteredFiles = this.files;
-            }
-
-            if(this.listViewActive) {
-                filteredAndSortedFiles = filteredFiles.sort((a, b) => {
-                    if(a.uploaded_at) {
-                        if(b.uploaded_at) {
-                            let dateA = new Date(a.uploaded_at);
-                            let dateB = new Date(b.uploaded_at);
-                            return dateB - dateA;
-                        } else {
-                            return 1; 
-                        }
+            function split(arr, prop, left, right) {
+                arr.forEach(val => {
+                    if(prop(val)) {
+                        left.push(val);
                     } else {
-                        if(b.uploaded_at) {
-                            return -1; 
-                        } else {
-                            return a.basename > b.basename ? 1 : a.basename < a.basename ? -1 : 0;
-                        }
+                        right.push(val);
                     }
-                })
-            } else {
-                filteredAndSortedFiles = filteredFiles;
+                });
             }
 
-            return filteredAndSortedFiles; 
+            const re = RegExp(this.filterPattern, 'i');
+            const filteredDirsAndFiles = this.files.filter(
+                file => file.basename.match(re)); 
+
+            const filteredDirs  = [], filteredFiles = [];
+
+            split(filteredDirsAndFiles, file => file.type == 'dir', 
+                filteredDirs, filteredFiles)
+           
+            switch(this.sorting) {
+                case 'aToZ':
+                    return filteredDirs.concat(filteredFiles);
+                case 'zToA':
+                    return filteredDirs.concat(filteredFiles.reverse());
+                case 'freshFirst':
+                case 'oldFirst':
+                    const withDate = [], withoutDate = [];
+
+                    split(filteredFiles, file => file.uploaded_at,
+                        withDate, withoutDate);
+
+                    withDate.forEach(file => {
+                        file.uploadedAt = new Date(file.uploaded_at);
+                    });                    
+                   
+                    const sortedByDate = this.sorting == 'freshFirst' ?
+                        withDate.sort((a, b) => b.uploadedAt - a.uploadedAt) :
+                        withDate.sort((a, b) => a.uploadedAt - b.uploadedAt) ; 
+
+                    return filteredDirs.concat(withoutDate).concat(sortedByDate);
+            }
         }
     },
     watch: {
@@ -258,6 +275,12 @@ $toolbarVerticalPaddings: 10px;
         input {
             height: 30px;
             padding-left: 5px;
+            margin-right: 10px;
+        }
+        select {
+            height: 30px;
+            margin-left: 3px;
+            padding-left: 3px;
         }
     }
     .files {
