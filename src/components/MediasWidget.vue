@@ -60,11 +60,11 @@
                         </div>
 
                         <media-widget
-                            v-for="file in filteredFiles"
+                            v-for="(file,index) in filteredFiles"
                             v-on:click.native="onMediaClick(file)"
                             v-on:contextmenu.native.prevent="onContextMenu(file, $event)"
                             v-bind:file="file"
-                            v-bind:key="file.path"
+                            v-bind:key="`${index}-${file.path}`"
                             class="animated fadeIn"
                         ></media-widget>
                     </div>
@@ -155,8 +155,8 @@ export default {
 
             const filteredDirs  = [], filteredFiles = [];
 
-            split(filteredDirsAndFiles, file => file.type == 'dir', 
-                filteredDirs, filteredFiles)
+            split(filteredDirsAndFiles, file => file.type === 'dir',
+                filteredDirs, filteredFiles);
            
             switch(this.sorting) {
                 case 'aToZ':
@@ -174,7 +174,7 @@ export default {
                         file.uploadedAt = new Date(file.uploaded_at);
                     });                    
                    
-                    const sortedByDate = this.sorting == 'freshFirst' ?
+                    const sortedByDate = this.sorting === 'freshFirst' ?
                         withDate.sort((a, b) => b.uploadedAt - a.uploadedAt) :
                         withDate.sort((a, b) => a.uploadedAt - b.uploadedAt) ; 
 
